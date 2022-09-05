@@ -1,0 +1,46 @@
+image: atlassian/default-image:2
+
+definitions:
+  steps:
+    - step: &build
+      script:
+        - DOCKER_CONTENT_TRUST=1
+        - docker build . -t tests --target test --output type=local,dest=out
+        - docker build . -t $BITBUCKET_REPO_SLUG
+        - docker save --output image.docker $BITBUCKET_REPO_SLUG
+        services:
+          - docker
+        caches:
+          - docker
+        artifacts:
+          - image.docker
+    - step: &scan
+        name: Scan
+        script:
+          - pipe: sonatype-community/nancy-scan:0.1.23
+            variables:
+              NANCY_VERSION: v1.0.33
+    - step: &push
+        name: Push
+        script:
+          - docker load --input ./image.docker
+          - pipe: atlassian/aws-ecr-push-image:1.4.2
+            variables:
+              IMAGE_NAME: $BITBUCKET_REPO_SLUG
+              TAGS: '${BITBUCKET_COMMIT} ${BITBUCKET_TAG}'
+              AWS_DEFAULT_REGION: 'eu-west-1'
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_tools
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_tools
+        services:
+          - docker
+
+pipelines:
+  pull-requests:
+    '**':
+      - step: *build
+
+  branches:
+    master:
+      - step: *build
+      - step: *scan
+      - step: *push

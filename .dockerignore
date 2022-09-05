@@ -1,0 +1,23 @@
+# Ignore items you don't want to invalidate the docker build cache.
+
+.DS_Store
+.git
+.gitignore
+.gitmodules
+.idea
+.vscode
+.editorconfig
+docker-compose*.yml
+venv
+__pycache__
+package-lock.json
+*.sqlite3
+*.pyc
+node_modules/
+vendor/
+bitbucket-pipelines.yml
+Makefile
+makefile
+README.md
+*.out
+*tmp

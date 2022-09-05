@@ -1,0 +1,38 @@
+# Reference: https://golangci-lint.run/usage/configuration/#run-configuration
+
+linters:
+  enable-all: true
+  disable:
+    # annoying linters
+    - paralleltest
+    - exhaustivestruct
+    - gci
+    - wsl
+    # awaiting issue to be resolved github.com/golangci/golangci-lint/issues/2649
+    - bodyclose
+    - contextcheck
+    - gosimple
+    - nilerr
+    - noctx
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - tparallel
+    - unparam
+    - wastedassign
+    - unused
+    # deprecated linters
+    - godot
+    - scopelint
+    - interfacer
+    - maligned
+    - golint
+
+issues:
+  exclude-rules:
+    # linters to exclude from test files
+    - path: '(.+)_test\.go'
+      linters:
+        - gochecknoglobals

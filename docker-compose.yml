@@ -1,0 +1,22 @@
+services:
+  gosample:
+    build:
+      context: .
+    platform: linux/amd64
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14-alpine
+    platform: linux/amd64
+    ports:
+      - '5432:5432'
+    expose:
+      - '5432'
+    environment:
+      POSTGRES_DB: gosample
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
